@@ -4,67 +4,72 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const register = async (req, res) => {
-    try {
-        const { 
-            role,
-            email,
-            fullname,
-            contact,
-            emergencyContact,
-            password,
-            confirmPassword,
-            birthdate,
-            license,
-            specialization,
-            profileImage,
-            gender,
-            allergies,
-            medicalConditions
-        } = req.body
-        //Check the database if user credentials provided already exist
-        const existingUsernameDetails = await User.findOne({ email, contact })
-        if(existingUsernameDetails) return res.status(409).json({ message: 'User already exist' })
-    
-        //check if password has atleast one uppercase, one number and a symbol and also minimum of eight characters long
-        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z0-9!@#$%^&*()_+-|{}]{8,}$/
-        if(!passwordRegex.test(password)) {
-            return res.status(400).json({ 
-                message: 'Password must contain at least one uppercase, one number, one special character and must be at least 8 characters long ' 
-            })
-        }
-        
-        //Hashing user password before saving to database for security reasons
-        const saltRounds = 10
-        const salt = await bcrypt.genSalt(saltRounds)
-        const hashedPassword = await bcrypt.hash(password, salt)
-        const hashedconfPassword = await bcrypt.hash(confirmPassword, salt)
-        if(hashedPassword !== hashedconfPassword) return res.status(409).json({ message: 'Passwords do not match' })
-        
-        //Save new user to the database
-        const user = new User({ 
-            role,
-            email,
-            contact,
-            fullname,
-            emergencyContact,
-            password: hashedPassword,
-            confirmPassword,
-            birthdate,
-            license,
-            specialization,
-            profileImage,
-            gender,
-            allergies,
-            medicalConditions
-        }) 
-        await user.save()
+  try {
+    const { 
+      role,
+      email,
+      fullname,
+      contact,
+      emergencyContact,
+      password,
+      confirmPassword,
+      birthdate,
+      license,
+      specialization,
+      gender,
+      allergies,
+      bloodType,
+      medicalConditions
+    } = req.body
+    //Check the database if user credentials provided already exist
+    const existingUsernameDetails = await User.findOne({ email, contact })
+    if(existingUsernameDetails) return res.status(409).json({ message: 'User already exist' })
 
-        // send verificaion mail after saving the user object
-        await sendOTPCode(user, res)
-    } catch (err) {
-        console.error(err)
-        res.status(500).json({ message: 'Internal server error' })
+    //check if password has atleast one uppercase, one number and a symbol and also minimum of eight characters long
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*\W)[A-Za-z0-9!@#$%^&*()_+-|{}]{8,}$/
+    if(!passwordRegex.test(password)) {
+      return res.status(400).json({ 
+        message: 'Password must contain at least one uppercase, one number, one special character and must be at least 8 characters long ' 
+      })
     }
+    
+    //Hashing user password before saving to database for security reasons
+    const saltRounds = 10
+    const salt = await bcrypt.genSalt(saltRounds)
+    const hashedPassword = await bcrypt.hash(password, salt)
+    const hashedconfPassword = await bcrypt.hash(confirmPassword, salt)
+    if(hashedPassword !== hashedconfPassword) return res.status(409).json({ message: 'Passwords do not match' })
+    const userProfileImage = req.file.path
+
+    //Save new user to the database
+    const user = new User({ 
+      role,
+      email,
+      contact,
+      fullname,
+      emergencyContact,
+      password: hashedPassword,
+      profileImage: userProfileImage,
+      gender
+    }) 
+
+    if(role === 'doctor') {
+      user.license = license
+      user.specialization = specialization
+    } else {
+      user.birthdate = birthdate
+      user.bloodType = bloodType
+      user.allergies = allergies
+      user.medicalConditions = medicalConditions
+    }   
+    await user.save()
+
+    // send verificaion mail after saving the user object
+    await sendOTPCode(user, res)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Internal server error' })
+  }
 }
 
 const verifyOTP = async (req, res) => {
@@ -144,7 +149,7 @@ const login = async (req, res) => {
 
 
 module.exports = {
-    register,
-    verifyOTP,
-    login
+  register,
+  verifyOTP,
+  login
 }

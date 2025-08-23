@@ -99,10 +99,15 @@ const sendOTPCode = async (user, res) => {
       subject: 'Verify Health Connect Account',
       html: message
     })
-    res.status(201).json({linkSent: true, message: 'Verification link has been sent to your email, kindly check your inbox, or spam to complete the signup process'})
+    res.status(201).json({
+      linkSent: true, 
+      id: user._id, 
+      email: user.email,
+      message: 'Verification link has been sent to your email, kindly check your inbox, or spam to complete the signup process'
+    })
   } catch(err) {
     await User.findByIdAndDelete(user._id)
-    res.status(401).json({ message: 'Verification link could not be sent, try again later'})
+    res.status(500).json({ message: 'Verification link could not be sent, try again later'})
   }
   } catch(err) {  
     console.error(err)

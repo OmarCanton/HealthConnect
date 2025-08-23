@@ -24,15 +24,14 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     birthdate: {
-        type: String,
-        required: true
+        type: String
     },
     license: String,
     specialization: String,
     profileImage: String,
     gender: {
         type: String,
-        enum: ['male', 'female', 'other'],
+        enum: ['Male', 'Female', 'Other'],
     },
     allergies: [
         {type: String}
@@ -40,6 +39,9 @@ const UserSchema = new mongoose.Schema({
     medicalConditions: [
         {type: String}
     ],
+    bloodType: {
+        type: String,
+    },
     role: {
         type: String,
         enum: ['patient', 'doctor'],

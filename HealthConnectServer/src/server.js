@@ -4,6 +4,7 @@ const connectToDB = require('./config/connectDB')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const authRoutes = require('./routes/authRoutes')
+const appointmentRoutes = require('./routes/appointments')
 
 //initialize app using express
 const app = express()
@@ -24,6 +25,7 @@ app.use(cookieParser())
 
 
 app.use('/server/auth', authRoutes)
+app.use('/server/appointment', appointmentRoutes)
 
 //connect and listen to the server
 const PORT = process.env.PORT
