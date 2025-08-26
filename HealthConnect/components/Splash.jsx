@@ -84,7 +84,7 @@ const SplashScreen = () => {
             },
           ]}
         >
-          <ActivityIndicator />
+          <ActivityIndicator color={'white'}/>
         </Animated.Text>
       </View>
     </View>

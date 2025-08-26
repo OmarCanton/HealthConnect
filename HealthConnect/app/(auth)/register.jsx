@@ -34,23 +34,23 @@ export default function Register() {
         bloodType: '',
         allergies: [],
         medicalConditions: []
-    })
+    });
 
     const gender = [
         'Male',
         'Female',
         'Other'
-    ]
+    ];
 
-    const [isRegistering, setIsRegistering] = useState(false)
+    const [isRegistering, setIsRegistering] = useState(false);
     const [seePasword, setSeePassword] = useState(false);
     const [seePasword2, setSeePassword2] = useState(false);
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [profilePicture, setProfilePicture] = useState('')
-    const imagePickerModalRef = useRef(null)
-    const [permissionStatus, setPermissionStatus] = useState(null)
-    const [cameraPermissionStat, setCameraPermissionStat] = useState(null)
-    const [message, setMessage] = useState('Patient: Select this option for standard patient access')
+    const [profilePicture, setProfilePicture] = useState('');
+    const imagePickerModalRef = useRef(null);
+    const [permissionStatus, setPermissionStatus] = useState(null);
+    const [cameraPermissionStat, setCameraPermissionStat] = useState(null);
+    const [message, setMessage] = useState('Patient: Select this option for standard patient access');
 
     const showDatePicker = () => setDatePickerVisibility(true);
     const hideDatePicker = () => setDatePickerVisibility(false);
@@ -169,19 +169,20 @@ export default function Register() {
     }
 
     const handleSignup = async () => {
-        if(formData.role === 'patient') {
+        if(formData?.role === 'patient') {
             if(
-                formData.fullname === '' ||
-                formData.email === '' ||
-                formData.contact === '' ||
-                formData.emergencyContact === '' ||
-                formData.password === '' ||
-                formData.confirmPassword === '' ||
-                formData.gender === '' ||
-                formData.birthdate === '' ||
-                formData.bloodType === ''
+                formData?.fullname === '' ||
+                formData?.email === '' ||
+                formData?.contact === '' ||
+                formData?.emergencyContact === '' ||
+                formData?.password === '' ||
+                formData?.confirmPassword === '' ||
+                formData?.gender === '' ||
+                formData?.birthdate === '' ||
+                formData?.bloodType === ''
             ) {
                 Alert.alert('Attention', 'All fields are required')
+                return
             }
         } else {
             if(
@@ -196,16 +197,23 @@ export default function Register() {
                 formData.specialization === '' 
             ) {
                 Alert.alert('Attention', 'All fields are required')
+                return
             }
         }
+
         setIsRegistering(true)
+
+        
         try {
             const formdata = new FormData()
-            formdata.append("profileImage", {
-                uri: formData.profileImage,
-                type: 'image/*',
-                name: 'upload.jpg'
-            });
+            formData.profileImage !== '' && (
+                formdata.append("profileImage", {
+                    uri: formData.profileImage,
+                    type: 'image/*',
+                    name: 'upload.jpg'
+                })
+            )
+    
             Object.entries(formData).map(([key, value]) => {
                 formdata.append(`${key}`, value)
             })
@@ -568,7 +576,7 @@ export default function Register() {
                                 justifyContent: 'center',
                                 borderRadius: 7,
                             }}
-                            onPress={handleSignup}
+                            onPress={() => handleSignup()}
                         >
                             {isRegistering ? (
                                 <ActivityIndicator color={'white'}/>

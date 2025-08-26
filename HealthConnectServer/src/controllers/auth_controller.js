@@ -39,7 +39,7 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt)
     const hashedconfPassword = await bcrypt.hash(confirmPassword, salt)
     if(hashedPassword !== hashedconfPassword) return res.status(409).json({ message: 'Passwords do not match' })
-    const userProfileImage = req.file.path
+    const userProfileImage = req?.file?.path
 
     //Save new user to the database
     const user = new User({ 

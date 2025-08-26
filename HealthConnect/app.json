@@ -28,7 +28,7 @@
         "backgroundColor": "#ffffff"
       },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
